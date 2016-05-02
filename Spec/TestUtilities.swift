@@ -909,20 +909,6 @@ extension ARTRealtime {
         }
     }
 
-    func simulateOSEventNoInternetConnection() {
-        // TODO
-        // It depends on how the SystemConfiguration Reachablity APIs is used.
-        // Basic demonstration: https://developer.apple.com/library/ios/samplecode/Reachability/Introduction/Intro.html
-        self.onDisconnected()
-    }
-
-    func simulateOSEventReachableInternetConnection() {
-        // TODO
-        // It depends on how the SystemConfiguration Reachablity APIs is used.
-        // Basic demonstration: https://developer.apple.com/library/ios/samplecode/Reachability/Introduction/Intro.html
-        //self.onConnecting()
-    }
-
     func dispose() {
         let names = self.channels.map({ $0.name })
         for name in names {
@@ -1077,5 +1063,26 @@ public func allValuesPass<U: CollectionType where U: DictionaryLiteralConvertibl
         }
 
         return true
+    }
+}
+
+@objc class TestReachability : NSObject, ARTReachability {
+    var host: String?
+    var callback: ((Bool) -> Void)?
+
+    required init(logger: ARTLog) {}
+
+    func listenForHost(host: String, callback: (Bool) -> Void) {
+        self.host = host
+        self.callback = callback
+    }
+
+    func off() {
+        self.host = nil
+        self.callback = nil
+    }
+
+    func simulate(reachable reachable: Bool) {
+        self.callback!(reachable)
     }
 }
