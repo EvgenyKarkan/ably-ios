@@ -786,7 +786,11 @@
         }
     }
 
-    [self transition:ARTRealtimeFailed withErrorInfo:[ARTErrorInfo createWithNSError:error.error]];
+    if (error.type == ARTRealtimeTransportErrorTypeNoInternet) {
+        [self transition:ARTRealtimeDisconnected];
+    } else {
+        [self transition:ARTRealtimeFailed withErrorInfo:[ARTErrorInfo createWithNSError:error.error]];
+    }
 }
 
 - (BOOL)reconnectWithFallback {
